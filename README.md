@@ -110,6 +110,8 @@ http://localhost:8501
 http://localhost:3000 (admin/admin)
 http://localhost:8000/docs
 ```
+
+---
 <img width="940" height="473" alt="image" src="https://github.com/user-attachments/assets/48eb05d0-ceb0-418c-9d15-fbd5519a2a0a" />
 
 <img width="949" height="448" alt="image" src="https://github.com/user-attachments/assets/cb92748a-83ca-45f7-8e8e-537588d525e9" />
