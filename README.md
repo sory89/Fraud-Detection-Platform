@@ -33,3 +33,79 @@ Producers
       │
       ▼
  Streamlit Dashboard
+
+---
+
+## ⚙️ Tech Stack
+
+- 🐍 Python  
+- ⚡ Apache Kafka  
+- 🌊 PyFlink (stateful streaming)  
+- 🧠 Feature Store (Redis + PostgreSQL)  
+- 🤖 Machine Learning (Gradient Boosting)  
+- ⚡ FastAPI (low-latency API)  
+- 📊 Streamlit (dashboard)  
+- 📈 Prometheus + Grafana (monitoring)  
+- 🐳 Docker Compose  
+
+---
+
+## 🎯 Key Features
+
+### 📡 Real-time Ingestion
+- Payment API events (~5 tx/s)
+- CDC ingestion (Debezium-style)
+- Multi-topic Kafka architecture
+
+---
+
+### ⚡ Stream Processing (PyFlink)
+
+- Event normalization  
+- Stream union (payments + CDC)  
+- Feature enrichment  
+- Real-time fraud scoring  
+
+#### Routing logic:
+- `fraud.decisions` → all scored transactions  
+- `fraud.alerts` → high-risk transactions  
+- `fraud.dlq` → invalid or failed events  
+
+---
+
+### 🧠 Feature Store
+
+#### 🔴 Online (Redis)
+- Sub-millisecond access  
+- Used for real-time inference  
+
+#### 🐘 Offline (PostgreSQL)
+- Historical features  
+- Training datasets  
+
+---
+
+### 🤖 Machine Learning
+
+- Model: Gradient Boosting  
+- AUC: ~0.97  
+- Features:
+  - txn_count_1min  
+  - avg_amount_5min  
+  - velocity_score  
+  - geo_anomaly  
+
+---
+
+### ⚡ FastAPI Decision API
+
+#### Endpoint
+
+---
+git clone https://github.com/sory89/Fraud-Detection-Platform.git
+cd Fraud-Detection-Platform
+docker compose up -d
+http://localhost:8501
+http://localhost:3000 (admin/admin)
+http://localhost:8000/docs
+---
