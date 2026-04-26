@@ -109,7 +109,6 @@ docker compose up -d
 http://localhost:8501
 http://localhost:3000 (admin/admin)
 http://localhost:8000/docs
-```
 
 ---
 <img width="940" height="473" alt="image" src="https://github.com/user-attachments/assets/48eb05d0-ceb0-418c-9d15-fbd5519a2a0a" />
