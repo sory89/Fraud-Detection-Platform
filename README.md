@@ -7,9 +7,21 @@ A **production-grade streaming platform** for fraud detection using
 
 ## 📸 Architecture Overview
 
-<p align="center">
-  <img src="docs/architecture.png" alt="Fraud Detection Architecture" width="900"/>
-</p>
+Payment API Producer (5 tx/s)  ──┐
+                                  ├──▶  Kafka (transactions.payments + transactions.cdc)
+CDC Producer (Debezium-style)  ──┘         │
+                                           ▼
+                                PyFlink Streaming
+                                normalize → score → route
+                                     │          │         │
+                                decisions    alerts     DLQ
+                                     │
+                                Feature Store
+                                Redis (online) + PostgreSQL (offline)
+                                     │
+                                FastAPI /score  ──▶  < 50ms
+                                     │
+                                Streamlit Dashboard
 
 ---
 
