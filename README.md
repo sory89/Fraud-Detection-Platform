@@ -101,12 +101,12 @@ Producers
 
 #### Endpoint
 
-
+```bash
 git clone https://github.com/sory89/Fraud-Detection-Platform.git
 cd Fraud-Detection-Platform
 docker compose up -d
 
----
+
 <img width="940" height="473" alt="image" src="https://github.com/user-attachments/assets/48eb05d0-ceb0-418c-9d15-fbd5519a2a0a" />
 
 <img width="949" height="448" alt="image" src="https://github.com/user-attachments/assets/cb92748a-83ca-45f7-8e8e-537588d525e9" />
