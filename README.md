@@ -106,7 +106,6 @@ Producers
 ## 🐳 Run Locally
 
 ```bash
-
 git clone https://github.com/sory89/Fraud-Detection-Platform.git
 cd Fraud-Detection-Platform
 docker compose up -d
