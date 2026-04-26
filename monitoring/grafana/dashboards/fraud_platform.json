@@ -1,0 +1,92 @@
+{
+  "title": "Fraud Detection Platform",
+  "uid": "fraud-platform-v2",
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": { "from": "now-3h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Total Transactions",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{ "rawSql": "SELECT COUNT(*) AS value FROM transactions", "format": "table", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#388bfd", "mode": "fixed" } } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Fraud Detected",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{ "rawSql": "SELECT COUNT(*) AS value FROM fraud_decisions WHERE is_fraud=true", "format": "table", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#f85149", "mode": "fixed" } } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Fraud Rate",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{ "rawSql": "SELECT ROUND(100.0 * SUM(CASE WHEN is_fraud THEN 1 ELSE 0 END) / NULLIF(COUNT(*),0), 1) AS value FROM fraud_decisions", "format": "table", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "unit": "percent", "color": { "mode": "thresholds" },
+        "thresholds": { "steps": [{"color":"green","value":null},{"color":"yellow","value":15},{"color":"red","value":25}] } } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Total Alerts",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{ "rawSql": "SELECT COUNT(*) AS value FROM alerts", "format": "table", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#e3b341", "mode": "fixed" } } }
+    },
+    {
+      "id": 5, "type": "stat", "title": "Avg Fraud Score",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{ "rawSql": "SELECT ROUND(AVG(fraud_score)::numeric, 3) AS value FROM fraud_decisions", "format": "table", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#a78bfa", "mode": "fixed" } } }
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "Transaction volume per minute",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{
+        "rawSql": "SELECT DATE_TRUNC('minute', timestamp) AS time, COUNT(*) AS value FROM transactions WHERE $__timeFilter(timestamp) GROUP BY 1 ORDER BY 1",
+        "format": "time_series", "refId": "A"
+      }],
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#388bfd", "mode": "fixed" }, "custom": { "lineWidth": 2, "fillOpacity": 15 } } }
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Fraud detections per minute",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{
+        "rawSql": "SELECT DATE_TRUNC('minute', decided_at) AS time, COUNT(*) AS value FROM fraud_decisions WHERE is_fraud=true AND $__timeFilter(decided_at) GROUP BY 1 ORDER BY 1",
+        "format": "time_series", "refId": "A"
+      }],
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#f85149", "mode": "fixed" }, "custom": { "lineWidth": 2, "fillOpacity": 15 } } }
+    },
+    {
+      "id": 8, "type": "barchart", "title": "Fraud alerts by rule",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{
+        "rawSql": "SELECT UNNEST(triggered_rules) AS rule, COUNT(*) AS count FROM fraud_decisions WHERE is_fraud=true GROUP BY 1 ORDER BY 2 DESC LIMIT 10",
+        "format": "table", "refId": "A"
+      }],
+      "options": { "xField": "rule" },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#f85149", "mode": "fixed" } } }
+    },
+    {
+      "id": 9, "type": "barchart", "title": "Top fraud countries",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "postgres", "uid": "postgres" },
+      "targets": [{
+        "rawSql": "SELECT t.country, COUNT(*) AS fraud_count FROM fraud_decisions d JOIN transactions t ON d.transaction_id=t.id WHERE d.is_fraud=true AND t.country IS NOT NULL GROUP BY 1 ORDER BY 2 DESC LIMIT 10",
+        "format": "table", "refId": "A"
+      }],
+      "options": { "xField": "country" },
+      "fieldConfig": { "defaults": { "color": { "fixedColor": "#e3b341", "mode": "fixed" } } }
+    }
+  ]
+}
